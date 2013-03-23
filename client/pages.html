@@ -1,0 +1,119 @@
+<head>
+  <title>Book Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />  
+</head>
+
+<body>
+  {{> page_controller}}
+</body>
+
+<template name="page_controller">
+  <div class="root container">
+    {{> header}}
+    <div class="main scrollable">
+      {{{display_page}}}
+      {{> footer}}
+    </div>
+  </div>
+</template>
+
+<template name="header">
+  <header><h1 class="page-header"><a class="navlink" href="/">Book Manager</a></h1></header>
+</template>
+
+<template name="footer">
+  <footer class="content-container page-footer">
+    <div class="media credits">
+      <a class="pull-left" href="http://benaiah.mischenko.com">
+        <img class="media-object" src="/benaiah.jpeg" />
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading">Meteor Book Manager</h4>
+        <p>A project by <a href="http://benaiah.mischenko.com">Benaiah Mischenko</a></p>
+      </div>
+    </div>
+  </footer>
+</template>
+
+<template name="index">
+    {{> book_list}}
+</template>
+
+<template name="page_not_found">
+  <h2>Page Not Found</h2>
+</template>
+
+<template name="about">
+  <h2>About</h2>
+</template>
+
+<template name="book_single">
+  {{> book_entry_full}}
+</template>
+
+<template name="book_list">
+  <table class="responsive-table container table book-list scrollable">
+    <tbody class="responsive-table">
+      {{#each books}}
+        {{> book_entry_summary}}
+      {{/each}}
+    </tbody>
+  </ul>
+</template>
+
+<template name="book_entry_summary">
+  <tr class="responsive-table row">
+    <td class="responsive-table span3 book-title-container"><strong><a class="navlink" href="/books/{{_id}}"><h3 class="book-summary-title">{{title}}</h3></a></strong></td>
+    <td class="responsive-table span2 book-author-container">
+      {{#if author}}
+        {{author}}
+      {{else}}
+        <span class="muted">No author is available.</span>
+      {{/if}}
+    </td>
+    <td class="responsive-table span4 book-description-container">
+      {{#if excerpt}}
+        {{#markdown}}{{excerpt}}{{/markdown}}
+      {{else}}
+        {{#if description}}
+          {{#extractExcerpt}}
+            {{#markdown}}{{description}}{{/markdown}}
+          {{/extractExcerpt}}
+        {{else}}
+          <p><span class="muted">No description is available.</span></p>
+        {{/if}}
+      {{/if}}
+    </td>
+    <td class="responsive-table span3 book-buttons-container">
+      {{> book_buttons}}
+    </td>
+  </li>
+</template>
+
+<template name="book_entry_full">
+  <div class="content-container book-entry-full">
+  {{#with book}}
+    <h2 class="page-title">{{title}}</h2>
+    <div class="book-entry-description">
+      {{#markdown}}{{description}}{{/markdown}}
+    </div>
+    <dl>
+      {{#each metadata}}
+        <dt>{{key}}</dt>
+        <dd>{{value}}</dd>
+      {{/each}}
+    </dl>
+    {{> book_buttons}}
+  {{/with}}
+  </div>
+</template>
+
+<template name="book_buttons">
+  <div class="btn-group btn-group-block book-buttons">
+    <button type="button" class="btn btn-success btn-third find">Find</button>
+    <button type="button" class="btn btn-primary btn-third edit">Edit</button>
+    <button type="button" class="btn btn-danger btn-third delete">Delete</button>
+  </div>
+  <div class="clearfix"></div>
+</template>
