@@ -1,7 +1,11 @@
 <head>
   <title>Athenaeum</title>
+  <link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes" />  
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="apple-touch-icon-precomposed" href="/img/icon.png"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <link rel="apple-touch-startup-image" href="/img/splash.png" />
 </head>
 
 <body>
@@ -24,16 +28,14 @@
 
 <template name="footer">
   <footer class="content-container page-footer">
-    <div class="media credits">
-      <a class="pull-left" href="http://benaiah.mischenko.com">
-        <img class="media-object" src="/benaiah.jpeg" />
-      </a>
-      <div class="media-body">
-        <h4 class="media-heading">Meteor Athenaeum</h4>
-        <p>A project by <a href="http://benaiah.mischenko.com">Benaiah Mischenko</a></p>
-      </div>
-    </div>
+    <p><a class="navlink" href="/about/">About Athenaeum</a></p>
+    {{> settings}}
   </footer>
+</template>
+<template name="settings">
+  <div class="btn-group btn-group-justified settings-buttons">
+    <a class="btn btn-default toggle-theme">{{#if darkTheme}}<span class="glyphicon glyphicon-eye-open"></span>{{else}}<span class="glyphicon glyphicon-eye-close"></span>{{/if}}</a>
+  </div>
 </template>
 
 <template name="index">
@@ -45,7 +47,20 @@
 </template>
 
 <template name="about">
-  <h2>About</h2>
+<div class="row content-container">
+  <div class="span12">
+    <h2 class="page-title">About Athenaeum</h2>
+{{#markdown}}
+
+Athenaeum is a project created by [Benaiah Mischenko](http://benaiah.mischenko.com). It's built using [Meteor](http://meteor.com), [Backbone.js](http://backbonejs.org/), and [Bootstrap](http://getbootstrap.com) (it uses the Bootstrap 3 beta).
+
+It's completely responsive - just try viewing it on a mobile device
+
+You can find more information, get installation instructions, submit bugs, or contribute to the project by visiting the [GitHub page](http://github.com/Benaiah/Athenaeum). You can contact me by emailing me at [benaiah.mischenko+athenaeum@gmail.com](mailto:benaiah.mischenko+athenaeum@gmail.com). Thanks!
+
+{{/markdown}}
+  </div>
+</div>
 </template>
 
 <template name="book_single">
@@ -92,28 +107,32 @@
 </template>
 
 <template name="book_entry_full">
-  <div class="content-container book-entry-full">
   {{#with book}}
-    <h2 class="page-title">{{title}}</h2>
-    <div class="book-entry-description">
-      {{#markdown}}{{description}}{{/markdown}}
+    <div class="row content-container book-entry-full">
+      <div class="span8">
+        <h2 class="page-title">{{title}}</h2>
+        <div class="book-entry-description">
+          {{#markdown}}{{description}}{{/markdown}}
+        </div>
+      </div>
+      <dl class="span4">
+        {{#each metadata}}
+          <dt>{{key}}</dt>
+          <dd>{{value}}</dd>
+        {{/each}}
+      </dl>
+      <div class="span12">
+        {{> book_buttons}}
+      </div>
     </div>
-    <dl>
-      {{#each metadata}}
-        <dt>{{key}}</dt>
-        <dd>{{value}}</dd>
-      {{/each}}
-    </dl>
-    {{> book_buttons}}
   {{/with}}
-  </div>
 </template>
 
 <template name="book_buttons">
-  <div class="btn-group btn-group-block book-buttons">
-    <button type="button" class="btn btn-success btn-third find">Find</button>
-    <button type="button" class="btn btn-primary btn-third edit">Edit</button>
-    <button type="button" class="btn btn-danger btn-third delete">Delete</button>
+  <div class="btn-group btn-group-justified book-buttons">
+    <a class="btn btn-success find">Find</a>
+    <a class="btn btn-primary edit">Edit</a>
+    <a class="btn btn-danger delete">Delete</a>
   </div>
   <div class="clearfix"></div>
 </template>
