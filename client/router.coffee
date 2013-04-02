@@ -3,16 +3,16 @@
 ###
 AppRouter = Backbone.Router.extend
   routes:
-    'books/:id': 'book'
-    '*path' : 'main'
+    'books/:isbn': 'book'
+    '*path': 'main'
 
   main: (url_path) ->
     Session.set 'page_id', url_path
-    Session.set 'book_id', ''
+    Session.set 'book_isbn', ''
 
-  book: (book_id) ->
+  book: (isbn) ->
     Session.set 'page_id', 'book_single'
-    Session.set 'book_id', book_id
+    Session.set 'book_isbn', isbn
 
 Router = new AppRouter
 

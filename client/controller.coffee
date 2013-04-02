@@ -1,6 +1,6 @@
 Template.page_controller.pages = [
-  'index',
-  'about',
+  'index'
+  'about'
   'book_single'
 ]
 
@@ -21,9 +21,9 @@ Template.page_controller.display_page = () ->
   if Template[page_index] and page_index in Template.page_controller.pages
     Template[page_index]()
   else
-    Template['page_not_found']()
- 
- 
+    Session.set 'not_found_title', 'page'
+    Template['not_found']()
+
 Template.page_controller.events =
   'click .navlink': (event) ->
     event.preventDefault()

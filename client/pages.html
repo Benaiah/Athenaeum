@@ -42,14 +42,14 @@
     {{> book_list}}
 </template>
 
-<template name="page_not_found">
-  <h2>Page Not Found</h2>
+<template name="not_found">
+  <h2>{{title}} Not Found</h2>
 </template>
 
 <template name="about">
-<div class="row content-container">
-  <div class="span12">
-    <h2 class="page-title">About Athenaeum</h2>
+  <div class="row content-container">
+    <div class="span12">
+      <h2 class="page-title">About Athenaeum</h2>
 {{#markdown}}
 
 Athenaeum is a project created by [Benaiah Mischenko](http://benaiah.mischenko.com). It's built using [Meteor](http://meteor.com), [Backbone.js](http://backbonejs.org/), and [Bootstrap](http://getbootstrap.com) (it uses the Bootstrap 3 beta).
@@ -59,8 +59,8 @@ It's completely responsive - just try viewing it on a mobile device
 You can find more information, get installation instructions, submit bugs, or contribute to the project by visiting the [GitHub page](http://github.com/Benaiah/Athenaeum). You can contact me by emailing me at [benaiah.mischenko+athenaeum@gmail.com](mailto:benaiah.mischenko+athenaeum@gmail.com). Thanks!
 
 {{/markdown}}
+    </div>
   </div>
-</div>
 </template>
 
 <template name="book_single">
@@ -79,7 +79,7 @@ You can find more information, get installation instructions, submit bugs, or co
 
 <template name="book_entry_summary">
   <tr class="responsive-table row">
-    <td class="responsive-table span3 book-title-container"><strong><a class="navlink" href="/books/{{_id}}"><h3 class="book-summary-title">{{title}}</h3></a></strong></td>
+    <td class="responsive-table span3 book-title-container"><strong><a class="navlink" href="/books/{{isbn}}"><h3 class="book-summary-title">{{title}}</h3></a></strong></td>
     <td class="responsive-table span2 book-author-container">
       {{#if author}}
         {{author}}

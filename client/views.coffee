@@ -17,7 +17,9 @@ Template.book_list.books = ->
   book_entry_full
 ###
 Template.book_entry_full.book = ->
-  book = Books.findOne Session.get 'book_id'
+  isbn = Session.get 'book_isbn'.replace(/-/g, '')
+  book = Books.findOne { 'isbn': isbn }
+
   if book
     notMetadata = ['title', '_id', 'metadata', 'description']
     book.metadata = []
@@ -30,8 +32,12 @@ Template.book_entry_full.book = ->
     book
 
 ###
-  
+  not_found
 ###
+Template.not_found.title = ->
+  notFoundTitleOriginal = Session.get 'not_found_title'
+  notFoundTitle = notFoundTitleOriginal.toUpperCase() + notFoundTitleOriginal.slice(1)
+  notFoundTitle
 
 ###
   settings
