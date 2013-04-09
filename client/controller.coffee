@@ -7,7 +7,6 @@ Template.page_controller.pages = [
 Template.page_controller.display_page = () ->
   page_index = Session.get 'page_id'
 
-  console.log page_index
   if page_index.length > 1
     if page_index.charAt(0) == "/"
       page_index = page_index.substring 1, page_index.length
@@ -21,7 +20,7 @@ Template.page_controller.display_page = () ->
   if Template[page_index] and page_index in Template.page_controller.pages
     Template[page_index]()
   else
-    Session.set 'not_found_title', 'page'
+    Session.set 'not_found.title', 'page'
     Template['not_found']()
 
 Template.page_controller.events =
@@ -36,7 +35,7 @@ Template.page_controller.events =
     Session.set 'page_url', pathname
 
 ## Make mobile browsers navigate instantly ##
-Template.page_controller.rendered = () ->
+Template.page_controller.rendered = ->
   new FastClick(document.body);
 
   $('body').on('touchmove', (e) ->

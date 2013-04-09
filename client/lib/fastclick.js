@@ -17,7 +17,7 @@
  * @constructor
  * @param {Element} layer The layer to listen on
  */
-function FastClick(layer) {
+window.FastClick = function(layer) {
 	'use strict';
 	var oldOnClick, self = this;
 

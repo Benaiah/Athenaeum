@@ -6,6 +6,17 @@
   <link rel="apple-touch-icon-precomposed" href="/img/icon.png"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <link rel="apple-touch-startup-image" href="/img/splash.png" />
+  <script>
+    (function() {
+      if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+        var msViewportStyle = document.createElement("style");
+        msViewportStyle.appendChild(
+          document.createTextNode("@-ms-viewport{width:auto!important}")
+        );
+        document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+      }
+    })();
+  </script>
 </head>
 
 <body>
@@ -16,14 +27,30 @@
   <div class="root container">
     {{> header}}
     <div class="main scrollable">
+      {{> toolbar}}
       {{{display_page}}}
       {{> footer}}
     </div>
   </div>
+  {{> add_book_modal}}
 </template>
 
 <template name="header">
-  <header><h1 class="page-header"><a class="navlink" href="/">Athenaeum</a></h1></header>
+  <header class="header-content"><h1 class="page-header"><a class="navlink" href="/">Athenaeum</a></h1>
+  </header>
+</template>
+
+<template name="toolbar">
+  <div class="toolbar container">
+    <div class="row">
+      <div class="span9"><div class="text">Welcome, user.</div></div>
+      <div class="span3">
+        <a id="add-book-button" data-toggle="modal" href="#add-book-modal" class="btn btn-block btn-primary create-new-book">
+          <span class="glyphicon glyphicon-plus"></span>Add Book
+        </a>
+      </div>
+    </div>
+  </div>
 </template>
 
 <template name="footer">
@@ -47,7 +74,7 @@
 </template>
 
 <template name="about">
-  <div class="row content-container">
+  <div class="row content-container page-container">
     <div class="span12">
       <h2 class="page-title">About Athenaeum</h2>
 {{#markdown}}
@@ -68,26 +95,28 @@ You can find more information, get installation instructions, submit bugs, or co
 </template>
 
 <template name="book_list">
-  <table class="responsive-table container table book-list scrollable">
+  <table class="responsive-table container table book-list">
     <tbody class="responsive-table">
       {{#each books}}
         {{> book_entry_summary}}
       {{/each}}
     </tbody>
-  </ul>
+  </table>
 </template>
 
 <template name="book_entry_summary">
   <tr class="responsive-table row">
-    <td class="responsive-table span3 book-title-container"><strong><a class="navlink" href="/books/{{isbn}}"><h3 class="book-summary-title">{{title}}</h3></a></strong></td>
-    <td class="responsive-table span2 book-author-container">
-      {{#if author}}
-        {{author}}
-      {{else}}
-        <span class="muted">No author is available.</span>
-      {{/if}}
+    <td class="responsive-table span4 book-title-container">
+      <a class="navlink" href="/books/{{isbn}}"><h4 class="book-summary-title">{{title}}</h4></a>
+      <div><em>
+        {{#if authors}}
+          by {{join authors delimiter=", "}}
+        {{else}}
+          <span class="muted">No author is available.</span>
+        {{/if}}
+      </em></div>
     </td>
-    <td class="responsive-table span4 book-description-container">
+    <td class="responsive-table span5 book-description-container">
       {{#if excerpt}}
         {{#markdown}}{{excerpt}}{{/markdown}}
       {{else}}
@@ -108,7 +137,7 @@ You can find more information, get installation instructions, submit bugs, or co
 
 <template name="book_entry_full">
   {{#with book}}
-    <div class="row content-container book-entry-full">
+    <div class="row content-container book-entry-full page-container">
       <div class="span8">
         <h2 class="page-title">{{title}}</h2>
         <div class="book-entry-description">
@@ -135,4 +164,108 @@ You can find more information, get installation instructions, submit bugs, or co
     <a class="btn btn-danger delete">Delete</a>
   </div>
   <div class="clearfix"></div>
+</template>
+
+<template name="add_book_modal">
+  <div id="add-book-modal" class="modal fade in scrollable" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Create New Book</h4>
+        </div>
+        <div class="modal-body">
+          {{> add_book_modal_body}}
+        </div>
+        <div class="modal-footer"><a href="#" class="btn" data-dismiss="modal">Close</a></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="add_book_modal_body">
+  <form>
+    <fieldset>
+      {{#unless isbnHasBeenInput}}
+        {{#if validationError}}
+          <div class="alert alert-error">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Sorry, the number you input is not a valid ISBN</div>
+        {{/if}}
+        <label for="input-isbn-number">ISBN Number</label>
+        <input id="input-isbn-number" type="tel" placeholder="978-1-59856-213-2" />
+        <p class="help-block">You'll need to input an ISBN number to pull info for the book.</p>
+        <a id="submit-isbn-number" class="btn btn-primary">Get Book Info</a>
+      {{else}}
+        {{#unless bookDataHasBeenReceived}}
+          {{> loading_animation}}
+        {{else}}
+          {{#unless bookDataTransferError}}
+            {{> add_book_data_form}}
+          {{else}}
+            <div class="alert alert-error"><h3>{{bookDataTransferError.error}}</h3><p>{{bookDataTransferError.reason}}</div>
+          {{/unless}}
+        {{/unless}}
+      {{/unless}}
+    </fieldset>
+  </form>
+</template>
+
+<template name="add_book_data_form">
+  {{#unless bookDataSubmitted}}
+    <label for="input-bookData-isbn">ISBN</label>
+    <input id="input-bookData-isbn" type="tel" value="{{bookData.isbn}}" {{#if isbnHasBeenInput}}disabled{{/if}} />
+    <label for="input-bookData-isbn13">ISBN13</label>
+    <input id="input-bookData-isbn13" type="tel" value="{{bookData.isbn13}}" {{#if isbnHasBeenInput}}disabled{{/if}} />
+    <label for="input-bookData-title">Title</label>
+    <input id="input-bookData-title" type="text" value="{{bookData.title}}" />
+    <label for="input-bookData-fullTitle">Full Title</label>
+    <input id="input-bookData-fullTitle" type="text" value="{{bookData.fullTitle}}" />
+    <label for="input-bookData-authors">Authors</label>
+    <input id="input-bookData-authors" type="text" value="{{join bookData.authors delimiter=", "}}" />
+    <p class="help-block">Please separate each author with a comma.</p>
+    <label for="input-bookData-description">Description</label>
+    <textarea id="input-bookData-description" class="expanding">{{bookData.description}}</textarea>
+    <p class="help-block">You can use <a href="http://daringfireball.net/projects/markdown/">Markdown formatting</a> in the description. Either the first paragraph or the first 160 characters, whichever is shorter, will be used for the list excerpt.</p>
+    <label for="input-bookData-publisher">Publisher</label>
+    <input id="input-bookData-publisher" type="text" value="{{bookData.publisher}}" />
+    <label for="input-bookData-publisherId">Publisher ID</label>
+    <input id="input-bookData-publisherId" type="text" value="{{bookData.publisherId}}" />
+    <a id="submit-bookData" class="btn btn-primary">Add Book</a>
+  {{else}}
+    {{#unless bookInserted}}
+      {{> loading_animation}}
+    {{else}}
+      {{#unless bookInsertionError}}
+        <div class="alert alert-success">The book has been successfully added!</div>
+      {{else}}
+        <div class="alert alert-error">There was an error while adding the book.</div>
+      {{/unless}}
+    {{/unless}}
+  {{/unless}}
+</template>
+
+<template name="loading_animation">
+  <div class="windows8 centered">
+    <div class="wBall" id="wBall_1">
+      <div class="wInnerBall">
+      </div>
+    </div>
+    <div class="wBall" id="wBall_2">
+      <div class="wInnerBall">
+      </div>
+    </div>
+    <div class="wBall" id="wBall_3">
+      <div class="wInnerBall">
+      </div>
+    </div>
+    <div class="wBall" id="wBall_4">
+      <div class="wInnerBall">
+      </div>
+    </div>
+    <div class="wBall" id="wBall_5">
+      <div class="wInnerBall">
+      </div>
+    </div>
+  </div>
 </template>
